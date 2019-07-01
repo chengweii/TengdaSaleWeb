@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="tengda-sale-web:war">
+    <output-path>$PROJECT_DIR$/tengda-sale-web/target</output-path>
+    <root id="archive" name="tengda-sale-web.war">
+      <element id="artifact" artifact-name="tengda-sale-web:war exploded" />
+    </root>
+  </artifact>
+</component>
