@@ -889,7 +889,6 @@
       <Position>10</Position>
       <Comment>更新时间</Comment>
       <DataType>timestamp|0s</DataType>
-      <NotNull>1</NotNull>
       <DefaultExpression>&apos;0000-00-00 00:00:00&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>

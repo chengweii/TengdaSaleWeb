@@ -68,5 +68,13 @@
 
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<!-- 通用视图渲染 -->
+<script src="../common/common.js"></script>
+
+<script>
+    renderList(null);
+</script>
+
 </body>
 </html>
