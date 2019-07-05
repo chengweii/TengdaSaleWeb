@@ -116,7 +116,7 @@
             url: "/sale_parts/list",
             params: {},
             title: "配件管理",
-            headers: ["配件编号", "配件名称", "配件价格", "配件库存数量", "创建时间"],
+            headers: ["配件编号", "配件名称", "配件价格（元）", "配件库存数量（个）", "创建时间"],
             attrNames: ["partsCode", "partsName", "currentPrice", "totalNum", "createTimeText"]
         }, {
             url: "/sale_parts/delete",
@@ -138,7 +138,7 @@
             url: "/sale_record/list",
             params: {},
             title: "配件进/出货管理",
-            headers: ["进/出货类型", "配件编号", "配件名称", "配件数量", "配件价格", "收款金额", "销售对象", "创建时间", "更新时间"],
+            headers: ["进/出货类型", "配件编号", "配件名称", "配件数量（个）", "配件价格（元）", "收款金额（元）", "销售对象", "创建时间", "更新时间"],
             attrNames: ["typeText", "partsCode", "partsName", "partsNum", "partsPrice", "orderAmount", "saleObject", "createTimeText", "updateTimeText"]
         }, {
             url: "/sale_record/delete",
