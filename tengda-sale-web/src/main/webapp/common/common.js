@@ -19,8 +19,8 @@ function renderList(listConfig) {
                 $(".container").html("");
 
                 var data = result.result;
-                var html = "<h1>" + listConfig.title + "</h1><hr/>";
-                html += "<h3>数据列表 <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-primary btn-sm btn-add\">添加</a></h3>";
+                var html = "";
+                html += "<h3><a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-primary btn-sm btn-add\">添加</a></h3>";
 
                 if (!data || data.length <= 0) {
                     html += "<div class=\"alert alert-warning\" role=\"alert\"><span class=\"glyphicon glyphicon-info-sign\" aria-hidden=\"true\"></span> 没有查询到数据，请添加。</div>";
