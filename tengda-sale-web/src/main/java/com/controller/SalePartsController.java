@@ -41,6 +41,9 @@ public class SalePartsController {
                 SalePartsEntityVo vo = new SalePartsEntityVo();
                 BeanUtils.copyProperties(item, vo);
                 vo.setCreateTimeText(dateFormat.format(item.getCreateTime()));
+                if(item.getUpdateTime()!=null){
+                    vo.setUpdateTimeText(dateFormat.format(item.getUpdateTime()));
+                }
                 listVo.add(vo);
             });
             return JsonResult.success(listVo);
@@ -52,6 +55,7 @@ public class SalePartsController {
     @Data
     public static class SalePartsEntityVo extends SalePartsEntity {
         private String createTimeText;
+        private String updateTimeText;
     }
 
     @RequestMapping("/sale_parts/add")
