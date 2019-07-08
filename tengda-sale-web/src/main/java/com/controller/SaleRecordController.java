@@ -1,11 +1,15 @@
 package com.controller;
 
-import com.common.JsonResult;
+import com.domain.JsonResult;
+import com.domain.Pager;
 import com.model.SaleRecordEntity;
 import com.repository.SaleRecordRepository;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +37,13 @@ public class SaleRecordController {
 
     @RequestMapping("/sale_record/list")
     @ResponseBody
-    public JsonResult list() {
-        List<SaleRecordEntity> list = saleRecordRepository.findAll();
+    public JsonResult list(@RequestBody Pager pager) {
+        PageRequest pageable = new PageRequest(pager.getPageNo() - 1, pager.getPageSize());
+        Page<SaleRecordEntity> page = saleRecordRepository.findAll(pageable);
         List<SaleRecordEntityVo> listVo = new ArrayList<SaleRecordEntityVo>();
-        if (!CollectionUtils.isEmpty(list)) {
+        if (page != null && !CollectionUtils.isEmpty(page.getContent())) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            list.forEach(item -> {
+            page.getContent().forEach(item -> {
                 SaleRecordEntityVo vo = new SaleRecordEntityVo();
                 BeanUtils.copyProperties(item, vo);
                 vo.setCreateTimeText(dateFormat.format(item.getCreateTime()));
@@ -48,7 +53,7 @@ public class SaleRecordController {
                 vo.setTypeText(item.getType() == (byte) 1 ? "进货" : "出货");
                 listVo.add(vo);
             });
-            return JsonResult.success(listVo);
+            return JsonResult.success(new PageImpl<SaleRecordEntityVo>(listVo, pageable, page.getTotalElements()));
         }
 
         return JsonResult.success(null);
@@ -74,8 +79,10 @@ public class SaleRecordController {
 
     @RequestMapping("/sale_record/delete/{id}")
     @ResponseBody
-    public JsonResult delete(@PathVariable int id) {
-        saleRecordRepository.delete(id);
+    public JsonResult delete(@PathVariable long id) {
+        SaleRecordEntity saleRecordEntity = new SaleRecordEntity();
+        saleRecordEntity.setId(id);
+        saleRecordRepository.delete(saleRecordEntity);
         saleRecordRepository.flush();
         return JsonResult.success(true);
     }

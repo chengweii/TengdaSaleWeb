@@ -1,11 +1,15 @@
 package com.controller;
 
-import com.common.JsonResult;
+import com.domain.JsonResult;
+import com.domain.Pager;
 import com.model.SalePartsEntity;
 import com.repository.SalePartsRepository;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,21 +36,22 @@ public class SalePartsController {
 
     @RequestMapping("/sale_parts/list")
     @ResponseBody
-    public JsonResult list() {
-        List<SalePartsEntity> list = salePartsRepository.findAll();
+    public JsonResult list(@RequestBody Pager pager) {
+        PageRequest pageable = new PageRequest(pager.getPageNo() - 1, pager.getPageSize());
+        Page<SalePartsEntity> page = salePartsRepository.findAll(pageable);
         List<SalePartsEntityVo> listVo = new ArrayList<SalePartsEntityVo>();
-        if (!CollectionUtils.isEmpty(list)) {
+        if (page != null && !CollectionUtils.isEmpty(page.getContent())) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            list.forEach(item -> {
+            page.getContent().forEach(item -> {
                 SalePartsEntityVo vo = new SalePartsEntityVo();
                 BeanUtils.copyProperties(item, vo);
                 vo.setCreateTimeText(dateFormat.format(item.getCreateTime()));
-                if(item.getUpdateTime()!=null){
+                if (item.getUpdateTime() != null) {
                     vo.setUpdateTimeText(dateFormat.format(item.getUpdateTime()));
                 }
                 listVo.add(vo);
             });
-            return JsonResult.success(listVo);
+            return JsonResult.success(new PageImpl<SalePartsEntityVo>(listVo, pageable, page.getTotalElements()));
         }
 
         return JsonResult.success(null);

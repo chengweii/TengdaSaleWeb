@@ -12,7 +12,8 @@
 
     <!-- 新 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/toastr.js/latest/css/toastr.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/simplePagination.js/1.6/simplePagination.min.css">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -106,6 +107,7 @@
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="//cdn.bootcss.com/toastr.js/latest/toastr.min.js"></script>
+<script src="//cdn.bootcss.com/simplePagination.js/1.6/jquery.simplePagination.min.js"></script>
 
 <!-- 通用视图渲染 -->
 <script src="../common/common.js"></script>
@@ -114,7 +116,7 @@
     function saleParts() {
         renderModule({
             url: "/sale_parts/list",
-            params: {},
+            params: {pageSize: 10, pageNo: 1},
             title: "配件管理",
             headers: ["配件编号", "配件名称", "配件价格（元）", "配件库存数量（个）", "创建时间"],
             attrNames: ["partsCode", "partsName", "currentPrice", "totalNum", "createTimeText"]
@@ -136,7 +138,7 @@
         $(this).addClass("isActive");
         renderModule({
             url: "/sale_record/list",
-            params: {},
+            params: {pageSize: 10, pageNo: 1},
             title: "配件进/出货管理",
             headers: ["进/出货类型", "配件编号", "配件名称", "配件数量（个）", "配件价格（元）", "收款金额（元）", "销售对象", "创建时间", "更新时间"],
             attrNames: ["typeText", "partsCode", "partsName", "partsNum", "partsPrice", "orderAmount", "saleObject", "createTimeText", "updateTimeText"]

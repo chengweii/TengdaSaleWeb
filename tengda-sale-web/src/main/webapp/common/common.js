@@ -1,8 +1,16 @@
 var loadingModal = {
     show: function (loadText) {
+        if ($('#loadingModal').attr("show") == true) {
+            return;
+        }
         $('#loadingModal').modal({backdrop: 'static', keyboard: false});
+        $('#loadingModal').attr("show", true);
     }, hide: function () {
+        if ($('#loadingModal').attr("show") == false) {
+            return;
+        }
         $('#loadingModal').modal('hide');
+        $('#loadingModal').attr("show", false);
     }
 };
 
@@ -11,23 +19,25 @@ function renderList(listConfig) {
     $.ajax({
         type: "post",
         url: listConfig.url,
-        data: listConfig.params,
+        contentType: "application/json;charset=utf-8",
+        data: JSON.stringify(listConfig.params),
         dataType: 'json',
         cache: false,
         success: function (result) {
             if (result && result.code == 200) {
                 $(".container").html("");
 
-                var data = result.result;
                 var html = "";
                 html += "<h3><a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-primary btn-sm btn-add\">添加</a></h3>";
 
-                if (!data || data.length <= 0) {
+                if (!result || !result.result) {
                     html += "<div class=\"alert alert-warning\" role=\"alert\"><span class=\"glyphicon glyphicon-info-sign\" aria-hidden=\"true\"></span> 没有查询到数据，请添加。</div>";
                     $(".container").html(html);
                     loadingModal.hide();
                     return;
                 }
+
+                var data = result.result.content;
 
                 var table = $("<table class=\"table table-bordered table-striped\"></table>");
                 var th = $("<tr></tr>");
@@ -48,6 +58,22 @@ function renderList(listConfig) {
 
                 $(".container").append(html);
                 $(".container").append(table);
+
+                $(".container").append("<div class=\"paginator\" style=\"text-align: center\"></div>");
+                $(".paginator").pagination({
+                    currentPage: result.result.number + 1 || 1,
+                    displayedPages: 5,
+                    pages: result.result.totalPages,
+                    itemsOnPage: result.result.numberOfElements,
+                    items: result.result.totalElements,
+                    cssStyle: 'light-theme',
+                    onPageClick: function (pageNumber, event) {
+                        listConfig.params.pageNo = pageNumber;
+                        renderList(listConfig);
+                    }
+                });
+                $(".paginator .prev").html("上一页");
+                $(".paginator .next").html("下一页");
 
                 if (listConfig.callback) {
                     listConfig.callback(result);
@@ -82,8 +108,8 @@ function renderRemove(removeConfig, listConfig) {
                 } else {
                     toastr.success('删除成功');
                 }
+                renderList(listConfig);
                 loadingModal.hide();
-                item.parent().remove();
             }
         });
     });
