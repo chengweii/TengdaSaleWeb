@@ -137,6 +137,7 @@
             headers: ["配件编号", "配件名称", "配件价格（元）", "配件库存数量（个）"],
             attrNames: ["partsCode", "partsName", "currentPrice", "totalNum"]
         });
+        document.title = $(".isActive").text();
     }
 
     saleParts();
@@ -166,11 +167,13 @@
             headers: ["进/出货类型", "配件编号", "配件名称", "配件数量（个）", "配件价格（元）", "收款金额（元）", "销售对象"],
             attrNames: ["type", "partsCode", "partsName", "partsNum", "partsPrice", "orderAmount", "saleObject"]
         });
+        document.title = $(".isActive").text();
     });
 
     $(".sale-report").click(function () {
         $(".jd-navHeader-item").removeClass("isActive");
         $(this).addClass("isActive");
+        document.title = $(".isActive").text();
     });
 
 </script>
