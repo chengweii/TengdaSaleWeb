@@ -76,6 +76,22 @@ public class SalePartsController {
         return JsonResult.success(result);
     }
 
+    @RequestMapping("/sale_parts/modify")
+    @ResponseBody
+    public JsonResult modify(@RequestBody SalePartsEntity salePartsEntity) {
+        SalePartsEntity oldSalePartsEntity = salePartsRepository.findOne(salePartsEntity.getId());
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        oldSalePartsEntity.setUpdateTime(now);
+        oldSalePartsEntity.setPartsName(salePartsEntity.getPartsName());
+        oldSalePartsEntity.setCurrentPrice(salePartsEntity.getCurrentPrice());
+        oldSalePartsEntity.setMaxPrice(salePartsEntity.getCurrentPrice().compareTo(oldSalePartsEntity.getMaxPrice()) > 0 ? salePartsEntity.getCurrentPrice() : oldSalePartsEntity.getMaxPrice());
+        oldSalePartsEntity.setMinPrice(salePartsEntity.getCurrentPrice().compareTo(oldSalePartsEntity.getMinPrice()) < 0 ? salePartsEntity.getCurrentPrice() : oldSalePartsEntity.getMinPrice());
+        oldSalePartsEntity.setTotalNum(salePartsEntity.getTotalNum());
+        SalePartsEntity result = salePartsRepository.saveAndFlush(oldSalePartsEntity);
+        return JsonResult.success(result);
+    }
+
     @RequestMapping("/sale_parts/delete/{id}")
     @ResponseBody
     public JsonResult delete(@PathVariable int id) {

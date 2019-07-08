@@ -7,6 +7,7 @@ import com.repository.SaleRecordRepository;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -51,6 +52,7 @@ public class SaleRecordController {
                     vo.setUpdateTimeText(dateFormat.format(item.getUpdateTime()));
                 }
                 vo.setTypeText(item.getType() == (byte) 1 ? "进货" : "出货");
+                vo.setSaleObject(item.getSaleObject() == null ? "" : item.getSaleObject());
                 listVo.add(vo);
             });
             return JsonResult.success(new PageImpl<SaleRecordEntityVo>(listVo, pageable, page.getTotalElements()));
@@ -74,6 +76,20 @@ public class SaleRecordController {
         saleRecordEntity.setUpdateTime(now);
         saleRecordEntity.setOrderAmount(saleRecordEntity.getPartsPrice().multiply(BigDecimal.valueOf(saleRecordEntity.getPartsNum())));
         SaleRecordEntity result = saleRecordRepository.saveAndFlush(saleRecordEntity);
+        return JsonResult.success(result);
+    }
+
+    @RequestMapping("/sale_record/modify")
+    @ResponseBody
+    public JsonResult modify(@RequestBody SaleRecordEntity saleRecordEntity) {
+        SaleRecordEntity oldSaleRecordEntity = saleRecordRepository.findOne(saleRecordEntity.getId());
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        oldSaleRecordEntity.setUpdateTime(now);
+        oldSaleRecordEntity.setOrderAmount(saleRecordEntity.getOrderAmount());
+        oldSaleRecordEntity.setPartsNum(saleRecordEntity.getPartsNum());
+        oldSaleRecordEntity.setPartsPrice(saleRecordEntity.getPartsPrice());
+        oldSaleRecordEntity.setSaleObject(saleRecordEntity.getSaleObject());
+        SaleRecordEntity result = saleRecordRepository.saveAndFlush(oldSaleRecordEntity);
         return JsonResult.success(result);
     }
 

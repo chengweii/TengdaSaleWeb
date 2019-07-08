@@ -50,9 +50,12 @@ function renderList(listConfig) {
                 for (var index in data) {
                     var tr = $("<tr></tr>");
                     for (var indexC in listConfig.attrNames) {
-                        tr.append("<td>" + data[index][listConfig.attrNames[indexC]] + "</td>");
+                        tr.append("<td class='" + listConfig.attrNames[indexC] + "' item-name='" + listConfig.attrNames[indexC] + "'>" + data[index][listConfig.attrNames[indexC]] + "</td>");
                     }
-                    tr.append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-remove\" style=\"margin:3px;\" item-id=\"" + data[index]["id"] + "\"> 删除</a>");
+                    var tdo = $("<td></td>");
+                    tdo.append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-success btn-modify\" item-id=\"" + data[index]["id"] + "\" item-state='normal'> 修改</a>");
+                    tdo.append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-remove\" item-id=\"" + data[index]["id"] + "\"> 删除</a>");
+                    tr.append(tdo);
                     table.append(tr);
                 }
 
@@ -88,8 +91,45 @@ function renderList(listConfig) {
     });
 }
 
-function renderAddForm(data) {
-    console.log("renderAddForm...");
+function renderAdd(addConfig, listConfig) {
+    $(".btn-add").click(function () {
+        loadingModal.show();
+        if (!addConfig || !addConfig.headers) {
+            return;
+        }
+        var addForm = $("<div style='margin-top:20px;'></div>");
+        for (var index in addConfig.headers) {
+            addForm.append("<div class=\"form-group\"><label for=\"title\">" + addConfig.headers[index] + ":</label><input type=\"text\" class=\"form-control\" name=\"" + addConfig.attrNames[index] + "\" name=\"title\" placeholder=\"请输入\"/></div>");
+        }
+        addForm.append("<div class=\"form-group\"><a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-save\" >提交</a></div>");
+        $(".container").html(addForm);
+
+        $(".btn-save").click(function(){
+            loadingModal.show();
+            $.ajax({
+                type: "post",
+                contentType: "application/json;charset=utf-8",
+                url: addConfig.url,
+                data: removeConfig.params,
+                dataType: 'json',
+                cache: false,
+                success: function (result) {
+                    if (!result || result.code != 200) {
+                        toastr.error('删除失败');
+                    } else {
+                        toastr.success('删除成功');
+                    }
+                    listConfig.params.pageNo = 1;
+                    renderList(listConfig);
+                    loadingModal.hide();
+                }
+            });
+        });
+
+        loadingModal.hide();
+    });
+
+    console.log("renderAdd finished.");
 }
 
 function renderRemove(removeConfig, listConfig) {
@@ -108,6 +148,7 @@ function renderRemove(removeConfig, listConfig) {
                 } else {
                     toastr.success('删除成功');
                 }
+                listConfig.params.pageNo = 1;
                 renderList(listConfig);
                 loadingModal.hide();
             }
@@ -116,9 +157,68 @@ function renderRemove(removeConfig, listConfig) {
     console.log("renderRemove finished.");
 }
 
-function renderModule(listConfig, removeConfig, modifyConfig) {
+function renderModify(modifyConfig, listConfig) {
+    $(".btn-modify").click(function () {
+        var item_state = $(this).attr("item-state");
+        if (item_state == 'normal') {
+            if (modifyConfig && modifyConfig.attrNames) {
+                var row = $(this).parent().parent();
+                var tds = row.find("td");
+                for (var index in modifyConfig.attrNames) {
+                    $.each(tds, function () {
+                        if ($(this).attr("item-name") == modifyConfig.attrNames[index]) {
+                            var input = $("<input type=\"text\" class=\"form-control\" name='" + $(this).attr("item-name") + "' placeholder=\"请输入\" style='width:140px'/>");
+                            input.val($(this).text());
+                            $(this).html(input);
+                        }
+                    });
+                }
+                $(this).html("保存");
+            }
+            $(this).attr("item-state", "editing");
+        } else {
+            if (modifyConfig && modifyConfig.attrNames) {
+                loadingModal.show();
+
+                var row = $(this).parent().parent();
+                var tds = row.find("td");
+                var params = {id: $(this).attr("item-id")};
+                $.each(tds, function () {
+                    var input = $(this).find("input");
+                    if (input[0]) {
+                        params[$(this).attr("item-name")] = input.val();
+                    }
+                });
+
+                $.ajax({
+                    type: "post",
+                    contentType: "application/json;charset=utf-8",
+                    url: modifyConfig.url,
+                    data: JSON.stringify(params),
+                    dataType: 'json',
+                    cache: false,
+                    success: function (result) {
+                        if (!result || result.code != 200) {
+                            toastr.error('修改失败');
+                        } else {
+                            toastr.success('修改成功');
+                        }
+                        renderList(listConfig);
+                        loadingModal.hide();
+                    }
+                });
+            }
+            $(this).html("修改");
+            $(this).attr("item-state", "normal");
+        }
+    });
+}
+
+function renderModule(listConfig, removeConfig, modifyConfig, addConfig) {
     listConfig.callback = function () {
         renderRemove(removeConfig, listConfig);
+        renderModify(modifyConfig, listConfig);
+        renderAdd(addConfig, listConfig);
     };
     renderList(listConfig);
 }

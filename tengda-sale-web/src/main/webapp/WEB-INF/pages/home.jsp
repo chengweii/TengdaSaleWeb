@@ -71,6 +71,12 @@
             color: #4ba2fa;
             border-bottom: 5px solid #4ba2fa;
         }
+
+        @media (min-width: 1200px) {
+            .container {
+                width: 1450px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -123,7 +129,14 @@
         }, {
             url: "/sale_parts/delete",
             params: {}
-        }, {});
+        }, {
+            url: "/sale_parts/modify",
+            attrNames: ["partsName", "currentPrice", "totalNum"]
+        }, {
+            url: "/sale_parts/add",
+            headers: ["配件编号", "配件名称", "配件价格（元）", "配件库存数量（个）"],
+            attrNames: ["partsCode", "partsName", "currentPrice", "totalNum"]
+        });
     }
 
     saleParts();
@@ -145,7 +158,14 @@
         }, {
             url: "/sale_record/delete",
             params: {}
-        }, {});
+        }, {
+            url: "/sale_record/modify",
+            attrNames: ["partsNum", "partsPrice", "orderAmount", "saleObject"]
+        }, {
+            url: "/sale_record/add",
+            headers: ["进/出货类型", "配件编号", "配件名称", "配件数量（个）", "配件价格（元）", "收款金额（元）", "销售对象"],
+            attrNames: ["typeText", "partsCode", "partsName", "partsNum", "partsPrice", "orderAmount", "saleObject"]
+        });
     });
 
     $(".sale-report").click(function () {
