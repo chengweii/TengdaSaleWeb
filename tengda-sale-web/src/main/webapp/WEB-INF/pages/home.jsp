@@ -170,9 +170,42 @@
         document.title = $(".isActive").text();
     });
 
+    function reportCallback() {
+        $(".data-row").each(function () {
+            var item_id = $(this).attr("item-id");
+            $(this).find(".opreate-td").append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-execute-sql\" item-id=\"" + item_id + "\"> 执行</a>");
+        });
+
+        $(".btn-execute-sql").click(function () {
+            var item_id = $(this).attr("item-id");
+            renderSimpleList({
+                url: "/sale_report/execute/" + item_id,
+                params: {pageSize: 10, pageNo: 1}
+            });
+        });
+    }
+
     $(".sale-report").click(function () {
         $(".jd-navHeader-item").removeClass("isActive");
         $(this).addClass("isActive");
+        renderModule({
+            url: "/sale_report/list",
+            params: {pageSize: 10, pageNo: 1},
+            title: "业务报表",
+            headers: ["报表名称", "报表SQL"],
+            attrNames: ["name", "querySql"],
+            userCallback: reportCallback
+        }, {
+            url: "/sale_report/delete",
+            params: {}
+        }, {
+            url: "/sale_report/modify",
+            attrNames: ["name", "querySql"]
+        }, {
+            url: "/sale_report/add",
+            headers: ["报表名称", "报表SQL"],
+            attrNames: ["name", "querySql"]
+        });
         document.title = $(".isActive").text();
     });
 

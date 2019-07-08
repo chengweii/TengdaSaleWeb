@@ -14,6 +14,61 @@ var loadingModal = {
     }
 };
 
+function renderSimpleList(listConfig) {
+    loadingModal.show();
+    $.ajax({
+        type: "post",
+        url: listConfig.url,
+        contentType: "application/json;charset=utf-8",
+        data: JSON.stringify(listConfig.params),
+        dataType: 'json',
+        cache: false,
+        success: function (result) {
+            if (result && result.code == 200) {
+                $(".container").html("");
+
+                var html = "";
+
+                if (!result || !result.result) {
+                    html += "<div class=\"alert alert-warning\" role=\"alert\"><span class=\"glyphicon glyphicon-info-sign\" aria-hidden=\"true\"></span> 没有查询到数据。</div>";
+                    $(".container").html(html);
+                    loadingModal.hide();
+                    return;
+                }
+
+                var data = result.result.content;
+
+                var table = $("<table class=\"table table-bordered table-striped\"></table>");
+                var th = $("<tr></tr>");
+                for (var index in result.result.headers) {
+                    th.append("<th style='min-width: 100px;'>" + result.result.headers[index] + "</th>");
+                }
+                table.append(th);
+
+                for (var index in data) {
+                    var tr = $("<tr class='data-row' item-id='" + data[index]["id"] + "'></tr>");
+                    for (var indexC in result.result.attrNames) {
+                        tr.append("<td class='" + result.result.attrNames[indexC] + "' item-name='" + result.result.attrNames[indexC] + "'>" + data[index][result.result.attrNames[indexC]] + "</td>");
+                    }
+                    table.append(tr);
+                }
+
+                $(".container").append(html);
+                $(".container").append(table);
+
+                if (listConfig.callback) {
+                    listConfig.callback(result);
+                }
+
+                loadingModal.hide();
+                console.log("renderList finished.");
+            } else {
+                console.log("renderList failed.");
+            }
+        }
+    });
+}
+
 function renderList(listConfig) {
     loadingModal.show();
     $.ajax({
@@ -42,17 +97,17 @@ function renderList(listConfig) {
                 var table = $("<table class=\"table table-bordered table-striped\"></table>");
                 var th = $("<tr></tr>");
                 for (var index in listConfig.headers) {
-                    th.append("<th>" + listConfig.headers[index] + "</th>");
+                    th.append("<th style='min-width: 100px;'>" + listConfig.headers[index] + "</th>");
                 }
-                th.append("<th>操作</th>");
+                th.append("<th style='min-width: 180px;'>操作</th>");
                 table.append(th);
 
                 for (var index in data) {
-                    var tr = $("<tr></tr>");
+                    var tr = $("<tr class='data-row' item-id='" + data[index]["id"] + "'></tr>");
                     for (var indexC in listConfig.attrNames) {
                         tr.append("<td class='" + listConfig.attrNames[indexC] + "' item-name='" + listConfig.attrNames[indexC] + "'>" + data[index][listConfig.attrNames[indexC]] + "</td>");
                     }
-                    var tdo = $("<td></td>");
+                    var tdo = $("<td class='opreate-td'></td>");
                     tdo.append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-success btn-modify\" item-id=\"" + data[index]["id"] + "\" item-state='normal'> 修改</a>");
                     tdo.append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-remove\" item-id=\"" + data[index]["id"] + "\"> 删除</a>");
                     tr.append(tdo);
@@ -80,6 +135,10 @@ function renderList(listConfig) {
 
                 if (listConfig.callback) {
                     listConfig.callback(result);
+                }
+
+                if (listConfig.userCallback) {
+                    listConfig.userCallback(result);
                 }
 
                 loadingModal.hide();
