@@ -51,3 +51,14 @@ CREATE TABLE `sale_record` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='销售记录表';
+
+-- ----------------------------
+-- Table structure for sale_report
+-- ----------------------------
+DROP TABLE IF EXISTS `sale_report`;
+CREATE TABLE `sale_report` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `query_sql` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
