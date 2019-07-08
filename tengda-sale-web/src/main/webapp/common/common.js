@@ -97,27 +97,35 @@ function renderAdd(addConfig, listConfig) {
         if (!addConfig || !addConfig.headers) {
             return;
         }
-        var addForm = $("<div style='margin-top:20px;'></div>");
+        var addForm = $("<div style='margin-top:20px;' class='add-form'></div>");
         for (var index in addConfig.headers) {
             addForm.append("<div class=\"form-group\"><label for=\"title\">" + addConfig.headers[index] + ":</label><input type=\"text\" class=\"form-control\" name=\"" + addConfig.attrNames[index] + "\" name=\"title\" placeholder=\"请输入\"/></div>");
         }
         addForm.append("<div class=\"form-group\"><a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-save\" >提交</a></div>");
         $(".container").html(addForm);
 
-        $(".btn-save").click(function(){
+        $(".btn-save").click(function () {
             loadingModal.show();
+
+            var params = {};
+            $(".add-form").find(".form-control").each(function (r) {
+                var name = $(this).attr("name");
+                var value = $(this).val();
+                params[name] = value;
+            })
+
             $.ajax({
                 type: "post",
                 contentType: "application/json;charset=utf-8",
                 url: addConfig.url,
-                data: removeConfig.params,
+                data: JSON.stringify(params),
                 dataType: 'json',
                 cache: false,
                 success: function (result) {
                     if (!result || result.code != 200) {
-                        toastr.error('删除失败');
+                        toastr.error('添加失败');
                     } else {
-                        toastr.success('删除成功');
+                        toastr.success('添加成功');
                     }
                     listConfig.params.pageNo = 1;
                     renderList(listConfig);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +38,7 @@ public class SalePartsController {
     @RequestMapping("/sale_parts/list")
     @ResponseBody
     public JsonResult list(@RequestBody Pager pager) {
-        PageRequest pageable = new PageRequest(pager.getPageNo() - 1, pager.getPageSize());
+        PageRequest pageable = new PageRequest(pager.getPageNo() - 1, pager.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
         Page<SalePartsEntity> page = salePartsRepository.findAll(pageable);
         List<SalePartsEntityVo> listVo = new ArrayList<SalePartsEntityVo>();
         if (page != null && !CollectionUtils.isEmpty(page.getContent())) {

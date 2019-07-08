@@ -164,7 +164,7 @@
         }, {
             url: "/sale_record/add",
             headers: ["进/出货类型", "配件编号", "配件名称", "配件数量（个）", "配件价格（元）", "收款金额（元）", "销售对象"],
-            attrNames: ["typeText", "partsCode", "partsName", "partsNum", "partsPrice", "orderAmount", "saleObject"]
+            attrNames: ["type", "partsCode", "partsName", "partsNum", "partsPrice", "orderAmount", "saleObject"]
         });
     });
 

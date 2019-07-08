@@ -7,10 +7,7 @@ import com.repository.SaleRecordRepository;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +36,7 @@ public class SaleRecordController {
     @RequestMapping("/sale_record/list")
     @ResponseBody
     public JsonResult list(@RequestBody Pager pager) {
-        PageRequest pageable = new PageRequest(pager.getPageNo() - 1, pager.getPageSize());
+        PageRequest pageable = new PageRequest(pager.getPageNo() - 1, pager.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
         Page<SaleRecordEntity> page = saleRecordRepository.findAll(pageable);
         List<SaleRecordEntityVo> listVo = new ArrayList<SaleRecordEntityVo>();
         if (page != null && !CollectionUtils.isEmpty(page.getContent())) {
