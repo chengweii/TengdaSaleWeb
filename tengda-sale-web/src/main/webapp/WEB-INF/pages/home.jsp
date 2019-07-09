@@ -22,6 +22,24 @@
     <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 0px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+            background-color: #555;
+        }
+
         .l-head {
             position: absolute;
             top: 0;
@@ -70,6 +88,23 @@
         .jd-navHeader-item.isActive {
             color: #4ba2fa;
             border-bottom: 5px solid #4ba2fa;
+        }
+
+        .functionInfo{
+            font-size: 12px;
+            display: block;
+            background: none repeat scroll 0 0;
+            background-color: #555555;
+            border-radius:4px 4px 4px 4px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 0px 10px inset;
+            clear: both;
+            font-family: 'Consolas', 'Courier', 'Monaco', monospace;
+            color: #fff;
+            /*background-color: #f8f8f8;*/
+            margin: 5px 0px;
+            overflow: auto;
+            padding: 10px;
+            white-space: pre;
         }
 
         @media (min-width: 1200px) {
@@ -170,7 +205,7 @@
         document.title = $(".isActive").text();
     });
 
-    function reportCallback() {
+    function reportCallback(result) {
         $(".data-row").each(function () {
             var item_id = $(this).attr("item-id");
             $(this).find(".opreate-td").append(" <a href=\"javaScript:void(0);\" type=\"button\" class=\"btn btn-sm btn-danger btn-execute-sql\" item-id=\"" + item_id + "\"> 执行</a>");
@@ -183,6 +218,9 @@
                 params: {pageSize: 10, pageNo: 1}
             });
         });
+
+        $(".container").prepend("<div class='functionInfo'>系统时间函数说明=》" + result.functionInfo + "</div>");
+        $(".container").find("th").eq(0).css("min-width","200px");
     }
 
     $(".sale-report").click(function () {
